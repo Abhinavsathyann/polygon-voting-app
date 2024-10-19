@@ -1,0 +1,286 @@
+<html>
+<head>
+    <title>Users</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            height: 100vh;
+            padding: 20px;
+        }
+        .sidebar img {
+            width: 100px;
+            display: block;
+            margin: 0 auto 20px;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+        .sidebar a.active, .sidebar a:hover {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .sidebar a i {
+            margin-right: 10px;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .content h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .content p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .table-container {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #e6f4ea;
+            font-weight: bold;
+        }
+        td {
+            border-top: 1px solid #ddd;
+        }
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+        .notification {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            color: #333;
+        }
+        .form-container {
+            display: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-container input, .form-container button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-container button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .vote-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .center-text {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <img alt="Logo" height="100" src="https://storage.googleapis.com/a1aa/image/ju1VnN97hdpeLCT2VEDB7uxE7MShZ4ri7Qtfq7OGUeFub7QnA.jpg" width="100"/>
+            <a class="active" href="#">
+                <i class="fas fa-info-circle"></i>
+                Candidate Details
+            </a>
+            <a href="#" id="add-candidate-link">
+                <i class="fas fa-user-plus"></i>
+                Add Candidate
+            </a>
+            <a href="#" id="add-voter-link">
+                <i class="fas fa-users"></i>
+                Add Voter
+            </a>
+            <a href="#" id="vote-link">
+                <i class="fas fa-exchange-alt"></i>
+                Vote
+            </a>
+            <a href="#" id="result-link">
+                <i class="fas fa-chart-bar"></i>
+                Result
+            </a>
+        </div>
+        <div class="content">
+            <h1>Users</h1>
+            <p>A list of all the users in your account including their name, title, email and role.</p>
+            <div class="form-container" id="form-container">
+                <input type="text" id="name" placeholder="Name" required />
+                <input type="text" id="party-name" placeholder="Party Name" required />
+                <input type="number" id="age" placeholder="Age" required />
+                <input type="text" id="status" placeholder="Status" required />
+                <input type="file" id="party-logo" accept="image/*" required />
+                <button id="submit-candidate">Submit</button>
+            </div>
+            <div class="form-container" id="voter-form-container">
+                <input type="text" id="voter-name" placeholder="Voter Name" required />
+                <input type="email" id="voter-email" placeholder="Voter Email" required />
+                <button id="submit-voter">Submit</button>
+            </div>
+            <div class="table-container" id="candidate-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Party Name</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                            <th>Party Logo</th>
+                            <th>Vote</th>
+                        </tr>
+                    </thead>
+                    <tbody id="candidate-table-body">
+                        <tr>
+                            <td class="no-data" colspan="6">No Candidate registered yet!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-container">
+                <h2 class="center-text">Voters</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody id="voter-table-body">
+                        <tr>
+                            <td class="no-data" colspan="2">No Voter registered yet!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="notification">
+            <i class="fas fa-bell"></i>
+        </div>
+    </div>
+    <script>
+        document.getElementById('add-candidate-link').addEventListener('click', function() {
+            document.getElementById('form-container').style.display = 'block';
+            document.getElementById('voter-form-container').style.display = 'none';
+            document.getElementById('candidate-table-container').style.display = 'none';
+        });
+
+        document.getElementById('add-voter-link').addEventListener('click', function() {
+            document.getElementById('voter-form-container').style.display = 'block';
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('candidate-table-container').style.display = 'none';
+        });
+
+        document.getElementById('submit-candidate').addEventListener('click', function() {
+            var name = document.getElementById('name').value;
+            var partyName = document.getElementById('party-name').value;
+            var age = document.getElementById('age').value;
+            var status = document.getElementById('status').value;
+            var partyLogoInput = document.getElementById('party-logo');
+            var partyLogo = partyLogoInput.files[0];
+
+            if (name && partyName && age && status && partyLogo) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var tableBody = document.getElementById('candidate-table-body');
+                    var noDataRow = tableBody.querySelector('.no-data');
+                    if (noDataRow) {
+                        noDataRow.remove();
+                    }
+
+                    var newRow = document.createElement('tr');
+                    newRow.innerHTML = '<td>' + name + '</td><td>' + partyName + '</td><td>' + age + '</td><td>' + status + '</td><td><img src="' + e.target.result + '" alt="Party Logo" width="50" height="50"></td><td><button class="vote-button">Vote</button></td>';
+                    tableBody.appendChild(newRow);
+
+                    document.getElementById('form-container').style.display = 'none';
+                    document.getElementById('name').value = '';
+                    document.getElementById('party-name').value = '';
+                    document.getElementById('age').value = '';
+                    document.getElementById('status').value = '';
+                    partyLogoInput.value = '';
+                };
+                reader.readAsDataURL(partyLogo);
+            }
+        });
+
+        document.getElementById('submit-voter').addEventListener('click', function() {
+            var voterName = document.getElementById('voter-name').value;
+            var voterEmail = document.getElementById('voter-email').value;
+
+            if (voterName && voterEmail) {
+                var tableBody = document.getElementById('voter-table-body');
+                var noDataRow = tableBody.querySelector('.no-data');
+                if (noDataRow) {
+                    noDataRow.remove();
+                }
+
+                var newRow = document.createElement('tr');
+                newRow.innerHTML = '<td>' + voterName + '</td><td>' + voterEmail + '</td>';
+                tableBody.appendChild(newRow);
+
+                document.getElementById('voter-form-container').style.display = 'none';
+                document.getElementById('voter-name').value = '';
+                document.getElementById('voter-email').value = '';
+            }
+        });
+
+        document.getElementById('vote-link').addEventListener('click', function() {
+            document.getElementById('candidate-table-container').style.display = 'block';
+            var voteButtons = document.querySelectorAll('.vote-button');
+            voteButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    alert('You have voted for ' + this.parentElement.parentElement.children[0].innerText);
+                });
+            });
+        });
+
+        document.getElementById('result-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            window.open('cel.html', 'cel.html');
+        });
+    </script>
+</body>
+</html>
